@@ -1,0 +1,31 @@
+.h5p-repetitor-main {
+  .h5p-repetitor-pages {
+    background-color: var(--h5p-theme-background);
+    overflow: hidden;
+    padding: var(--h5p-theme-spacing-m);
+  }
+
+  &.h5p-repetitor-main-cycle > .h5p-navigation .h5p-theme-button {
+    visibility: visible; // Overide navigation with higher specificity
+  }
+
+  .h5p-navigation .h5p-progress-dot.disabled {
+    pointer-events: none;
+
+    &:focus-visible {
+      transform: scale(1);
+    }
+  }
+
+  &.h5p-repetitor-main-no-backwards > .h5p-navigation .h5p-theme-button.h5p-theme-previous {
+    visibility: hidden;
+  }
+
+  &.h5p-repetitor-main-no-forward > .h5p-navigation:not(.next-is-visible) .h5p-theme-button.h5p-theme-next {
+    visibility: hidden;
+  }
+
+  &.h5p-repetitor-main-no-forward > .h5p-navigation.next-is-visible .h5p-theme-button.h5p-theme-next {
+    visibility: visible;
+  }
+}

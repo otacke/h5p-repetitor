@@ -1,0 +1,36 @@
+.h5p-repetitor-page {
+  background-color: var(--h5p-theme-ui-base);
+  border: solid 1px var(--h5p-theme-stroke-1);
+  border-radius: var(--h5p-theme-border-radius-medium);
+  box-shadow: 0 var(--h5p-theme-spacing-xxs) var(--h5p-theme-spacing-m) 0 rgba(0, 0, 0, 0.05);
+  font-size: var(--h5p-theme-font-size-m);
+  float: left;
+  margin-left: -100%;
+  position: relative;
+  padding: var(--h5p-theme-spacing-s);
+  transition: left .35s;
+  width: 100%;
+
+  /* Remove fullscreen for video tags and DQ */
+  .h5p-repetitor-content-instance video::-webkit-media-controls-fullscreen-button,
+  .h5p-repetitor-content-instance .h5p-my-fullscreen-button-enter {
+    display: none;
+  }
+
+  &.past {
+    left: 0%;
+  }
+
+  &.present {
+    left: 100%;
+    z-index: 2;
+  }
+
+  &.future {
+    left: 200%;
+  }
+
+  &.display-none {
+    display: none;
+  }
+}

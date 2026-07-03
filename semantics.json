@@ -1,0 +1,220 @@
+[
+  {
+    "name": "content",
+    "type": "list",
+    "label": "List of contents",
+    "importance": "high",
+    "widgets": [
+      {
+        "name": "VerticalTabs",
+        "label": "Default"
+      }
+    ],
+    "min": 1,
+    "entity": "content",
+    "field": {
+      "name": "content",
+      "type": "group",
+      "fields": [
+        {
+          "name": "libraryParams",
+          "type": "library",
+          "label": "Content",
+          "importance": "high",
+          "options": [
+            "H5P.Accordion 1.0",
+            "H5P.Agamotto 1.6",
+            "H5P.Audio 1.5",
+            "H5P.AudioRecorder 1.0",
+            "H5P.Chart 1.2",
+            "H5P.Collage 0.3",
+            "H5P.CoursePresentation 1.25",
+            "H5P.Dialogcards 1.9",
+            "H5P.DocumentationTool 1.8",
+            "H5P.DragQuestion 1.14",
+            "H5P.DragText 1.10",
+            "H5P.Essay 1.5",
+            "H5P.Blanks 1.14",
+            "H5P.ImageHotspotQuestion 1.8",
+            "H5P.GuessTheAnswer 1.5",
+            "H5P.IFrameEmbed 1.0",
+            "H5P.Image 1.1",
+            "H5P.MultiMediaChoice 0.3",
+            "H5P.ImageHotspots 1.10",
+            "H5P.ImageSlider 1.1",
+            "H5P.InteractiveVideo 1.26",
+            "H5P.Link 1.3",
+            "H5P.MarkTheWords 1.11",
+            "H5P.MemoryGame 1.3",
+            "H5P.MultiChoice 1.16",
+            "H5P.Questionnaire 1.3",
+            "H5P.QuestionSet 1.20",
+            "H5P.SingleChoiceSet 1.11",
+            "H5P.Summary 1.10",
+            "H5P.Table 1.1",
+            "H5P.AdvancedText 1.1",
+            "H5P.Timeline 1.1",
+            "H5P.TrueFalse 1.8",
+            "H5P.Video 1.6"
+          ]
+        },
+        {
+          "name": "Dummy",
+          "type": "boolean",
+          "widget": "none"
+        }
+      ]
+    }
+  },
+  {
+    "name": "behaviour",
+    "type": "group",
+    "importance": "low",
+    "label": "Behavioural settings",
+    "fields": [
+      {
+        "name": "cycle",
+        "type": "boolean",
+        "label": "Cycle through contents",
+        "description": "Go back to first item after last and vice versa.",
+        "default": false
+      },
+      {
+        "name": "showProgressOnNavigationDots",
+        "type": "boolean",
+        "label": "Show progress on navigation dots",
+        "description": "If checked, will mark dots of content that was answered.",
+        "default": false
+      },
+      {
+        "name": "canGoBackwards",
+        "type": "boolean",
+        "label": "User can go backwards",
+        "description": "If checked, the user can go backwards to a previous question.",
+        "default": true
+      },
+      {
+        "name": "canSkipForward",
+        "type": "boolean",
+        "label": "User can skip forward",
+        "description": "If checked, the user can skip forward without answering the current question.",
+        "default": true
+      },
+      {
+        "name": "displayPageAnnouncement",
+        "type": "boolean",
+        "label": "Display current page in toolbar",
+        "default": true
+      },
+      {
+        "name": "displayContentAnnouncement",
+        "type": "boolean",
+        "label": "Display content title in toolbar",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "l10n",
+    "type": "group",
+    "label": "User interface",
+    "common": true,
+    "fields": [
+      {
+        "name": "pageAnnouncement",
+        "type": "text",
+        "label": "Page announcement",
+        "default": "@current / @total",
+        "description": "@current and @total are placeholders and will be replaced by the respective values."
+      },
+      {
+        "name": "noTitle",
+        "type": "text",
+        "label": "Content without a title",
+        "default": "Untitled"
+      },
+      {
+        "name": "next",
+        "type": "text",
+        "label": "Label for \"Next\" button",
+        "default": "Next"
+      },
+      {
+        "name": "previous",
+        "type": "text",
+        "label": "Label for \"Previous\" button",
+        "default": "Previous"
+      },
+      {
+        "name": "noContents",
+        "type": "text",
+        "label": "No contents",
+        "default": "It seems that no valid contents were set."
+      }
+    ]
+  },
+  {
+    "name": "a11y",
+    "type": "group",
+    "label": "Accessibility texts",
+    "common": true,
+    "fields": [
+      {
+        "name": "previousContent",
+        "type": "text",
+        "label": "Previous content",
+        "default": "Go to previous content."
+      },
+      {
+        "name": "nextContent",
+        "type": "text",
+        "label": "Next content",
+        "default": "Go to next content."
+      },
+      {
+        "name": "movedTo",
+        "type": "text",
+        "label": "Moved to page",
+        "default": "Moved to page @current of @total.",
+        "description": "@current and @total are placeholders and will be replaced by the respective values."
+      },
+      {
+        "name": "navigationTop",
+        "type": "text",
+        "label": "Top navigation",
+        "default": "Top navigation bar"
+      },
+      {
+        "name": "navigationBottom",
+        "type": "text",
+        "label": "Bottom navigation",
+        "default": "Bottom navigation bar"
+      },
+      {
+        "name": "currentQuestion",
+        "type": "text",
+        "label": "Current question",
+        "default": "Current question"
+      },
+      {
+        "name": "answered",
+        "type": "text",
+        "label": "Answered",
+        "default": "Answered"
+      },
+      {
+        "name": "unanswered",
+        "type": "text",
+        "label": "Unanswered",
+        "default": "Unanswered"
+      },
+      {
+        "name": "jumpToQuestion",
+        "type": "text",
+        "label": "Content @current of @total",
+        "default": "Content @current of @total",
+        "description": "@current and @total are placeholders and will be replaced by the respective values."
+      }
+    ]
+  }
+]

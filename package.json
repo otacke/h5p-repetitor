@@ -1,0 +1,44 @@
+{
+  "name": "h5p-repetitor",
+  "version": "1.0.0",
+  "description": "Let students do spaced repetition exercises",
+  "private": true,
+  "scripts": {
+    "lint": "stylelint './src/**/*.scss' && eslint './src/**/*.js'",
+    "build": "webpack --mode=production",
+    "watch": "webpack --mode=development --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/otacke/h5p-repetitor.git"
+  },
+  "keywords": [
+    "h5p",
+    "library"
+  ],
+  "author": "Oliver Tacke",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
+    "babel-loader": "^10.1.1",
+    "css-loader": "^7.1.4",
+    "eslint-config-snordian-h5p": "github:otacke/eslint-config-snordian-h5p",
+    "mini-css-extract-plugin": "^2.10.2",
+    "regenerator-runtime": "^0.14.1",
+    "resolve-url-loader": "^5.0.0",
+    "sass": "^1.101.0",
+    "sass-loader": "^17.0.0",
+    "stylelint": "^17.14.0",
+    "stylelint-config-recommended": "^18.0.0",
+    "stylelint-config-recommended-scss": "^17.0.1",
+    "terser-webpack-plugin": "^5.6.1",
+    "webpack": "^5.108.3",
+    "webpack-cli": "^7.1.0"
+  },
+  "dependencies": {
+    "he": "^1.2.0"
+  },
+  "browserslist": "> 0.5%, last 3 versions, Firefox ESR, not dead",
+  "type": "module"
+}
