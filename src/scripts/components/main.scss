@@ -5,10 +5,6 @@
     padding: var(--h5p-theme-spacing-m);
   }
 
-  &.h5p-repetitor-main-cycle > .h5p-navigation .h5p-theme-button {
-    visibility: visible; // Overide navigation with higher specificity
-  }
-
   .h5p-navigation .h5p-progress-dot.disabled {
     pointer-events: none;
 

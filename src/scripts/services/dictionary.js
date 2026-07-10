@@ -19,7 +19,7 @@ export default class Dictionary {
   }
 
   /**
-   * Get translation for a key.
+   * Get translation for key.
    * @param {string} key Key to look for.
    * @param {object} [base] Base to start looking.
    * @returns {string} Translation.
@@ -34,7 +34,7 @@ export default class Dictionary {
     key = splits.shift();
 
     if (typeof base[key] !== 'object') {
-      return; // Path doesn't exist
+      return;
     }
 
     return this.get(splits.join('.'), base[key]);
@@ -56,9 +56,6 @@ export default class Dictionary {
       const div = document.createElement('div');
       div.innerHTML = translation;
       translation = div.textContent || div.innerText || '';
-    }
-    else {
-      // Invalid translation
     }
 
     return translation;

@@ -9,7 +9,7 @@ export default class Page {
    * @param {number} params.index Index of page.
    * @param {object} params.libraryParams Library parameters for content.
    * @param {object} [callbacks] Callbacks.
-   * @param {function} [callbacks.onAnswerStateChanged] Call when instances answer state changed.
+   * @param {function} [callbacks.onAnswerStateChanged] Call on instances answer state changed.
    */
   constructor(params = {}, callbacks = {}) {
     this.params = extend({
@@ -74,7 +74,7 @@ export default class Page {
   }
 
   /**
-   * Find first focusable element and set focus.
+   * Set focus to first focusable element.
    * @returns {boolean} True if could focus on first child, else false.
    */
   focusFirstChild() {
@@ -141,15 +141,15 @@ export default class Page {
   }
 
   /**
-   * Determine whether page holds a task.
-   * @returns {boolean} True if page holds a task, else false.
+   * Determine whether page holds task.
+   * @returns {boolean} True if page holds task, else false.
    */
   holdsTask() {
     return this.h5pContent.isTask();
   }
 
   /**
-   * Register callback to call once the next transition has ended.
+   * Register callback to call once next transition has ended.
    * @param {function} callback Callback when transition has ended.
    */
   registerTransitionEnd(callback) {

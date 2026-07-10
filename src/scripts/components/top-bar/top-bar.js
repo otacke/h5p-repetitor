@@ -15,15 +15,18 @@ export default class TopBar {
     this.params = extend({
     }, params);
 
-    // Build DOM
     this.dom = document.createElement('div');
     this.dom.classList.add('h5p-repetitor-top-bar');
 
     this.roundAnnouncer = document.createElement('div');
     this.roundAnnouncer.classList.add('h5p-repetitor-page-announcer');
 
-    if (this.params.announcePage) {
-      this.progressIndicator = new ProgressIndicator();
+    if (this.params.announcePage || this.params.announceRound) {
+      this.progressIndicator = new ProgressIndicator({
+        roundTemplate: this.params.dictionary.get('l10n.roundTemplate'),
+        hasPage: this.params.announcePage,
+        hasRound: this.params.announceRound,
+      });
       this.roundAnnouncer.append(this.progressIndicator.getDOM());
     }
 
@@ -37,7 +40,7 @@ export default class TopBar {
   }
 
   /**
-   * Return the DOM for this class.
+   * Return DOM for this class.
    * @returns {HTMLElement} DOM for this class.
    */
   getDOM() {
@@ -61,6 +64,14 @@ export default class TopBar {
   }
 
   /**
+   * Set round value of progress indicator.
+   * @param {number} value Round value.
+   */
+  setIndicatorRound(value) {
+    this.progressIndicator?.setRound(value);
+  }
+
+  /**
    * Set title text.
    * @param {string} text Title text.
    */
@@ -74,5 +85,15 @@ export default class TopBar {
     }
 
     this.title.innerText = text;
+  }
+
+  /**
+   * Toggle visibility.
+   * @param {boolean} visible True to toggle visible, false for invisible.
+   */
+  toggle(visible) {
+    const invisible = (typeof visible === 'boolean') ? !visible : !this.dom.classList.contains('display-none');
+
+    this.dom.classList.toggle('display-none', invisible);
   }
 }

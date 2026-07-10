@@ -11,12 +11,6 @@
   transition: left .35s;
   width: 100%;
 
-  /* Remove fullscreen for video tags and DQ */
-  .h5p-repetitor-content-instance video::-webkit-media-controls-fullscreen-button,
-  .h5p-repetitor-content-instance .h5p-my-fullscreen-button-enter {
-    display: none;
-  }
-
   &.past {
     left: 0%;
   }

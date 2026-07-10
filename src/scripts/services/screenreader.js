@@ -9,26 +9,6 @@ export default class Screenreader {
   }
 
   /**
-   * Set class if default CSS values do not suffice.
-   * @param {string} className Class name to set. Add CSS elsewhere.
-   */
-  static setClass(className) {
-    if (typeof className !== 'string') {
-      return;
-    }
-
-    // Remove default values
-    Screenreader.dom.style.height = '';
-    Screenreader.dom.style.overflow = '';
-    Screenreader.dom.style.position = '';
-    Screenreader.dom.style.textIndent = '';
-    Screenreader.dom.style.top = '';
-    Screenreader.dom.style.width = '';
-
-    Screenreader.dom.classList = className;
-  }
-
-  /**
    * Read text via aria live region.
    * @param {string} text Text to read.
    */
@@ -53,6 +33,26 @@ export default class Screenreader {
       Screenreader.readText = null;
       Screenreader.dom.innerText = '';
     }, 100);
+  }
+
+  /**
+   * Set class if default CSS values do not suffice.
+   * @param {string} className Class name to set. Add CSS elsewhere.
+   */
+  static setClass(className) {
+    if (typeof className !== 'string') {
+      return;
+    }
+
+    // Remove default values
+    Screenreader.dom.style.height = '';
+    Screenreader.dom.style.overflow = '';
+    Screenreader.dom.style.position = '';
+    Screenreader.dom.style.textIndent = '';
+    Screenreader.dom.style.top = '';
+    Screenreader.dom.style.width = '';
+
+    Screenreader.dom.classList = className;
   }
 }
 

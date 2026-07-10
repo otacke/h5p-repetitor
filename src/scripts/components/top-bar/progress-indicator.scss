@@ -2,12 +2,21 @@
   background-color: var(--h5p-theme-contrast-cta-light);
   border-radius: var(--h5p-theme-border-radius-medium);
   color: var(--h5p-theme-contrast-cta-white);
-  display: table;
+  display: flex;
   font-weight: 700;
+  gap: var(--h5p-theme-spacing-xxs);
   padding: calc(var(--h5p-theme-spacing-xxs) / 2) var(--h5p-theme-spacing-xxs);
   white-space: nowrap;
 
   .progress-indicator-delimiter {
     padding: calc(0.25 * var(--h5p-theme-spacing-s));
+  }
+
+  .progress-indicator-page.display-none {
+    display: none;
+  }
+
+  .progress-indicator-round.display-none {
+    display: none;
   }
 }

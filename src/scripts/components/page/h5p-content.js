@@ -1,5 +1,6 @@
 import { isInstanceTask } from '@services/h5p-util.js';
-import { extend } from '@services/util.js';
+import { callOnceVisible, extend } from '@services/util.js';
+import './h5p-content.scss';
 
 export default class H5PContent {
 
@@ -9,7 +10,7 @@ export default class H5PContent {
    * @param {number} params.index Index of page.
    * @param {object} params.libraryParams Library parameters for content.
    * @param {object} [callbacks] Callbacks.
-   * @param {function} [callbacks.onAnswerStateChanged] Signal that answer state changed.
+   * @param {function} [callbacks.onAnswerStateChanged] Signal answer state changed.
    */
   constructor(params = {}, callbacks = {}) {
     this.params = extend({
@@ -28,32 +29,16 @@ export default class H5PContent {
   }
 
   /**
-   * Get DOM with H5P exercise.
-   * @returns {HTMLElement} DOM with H5P exercise.
-   */
-  getDOM() {
-    return this.dom;
-  }
-
-  /**
-   * Get xAPI data from exercises.
-   * @returns {object} XAPI data objects used to build report.
-   */
-  getXAPIData() {
-    return this.instance?.getXAPIData?.();
-  }
-
-  /**
    * Initialize H5P instance.
    */
   initializeInstance() {
-    if (this.instance === null || this.instance) {
-      return; // Only once, please
+    if (this.instance) {
+      return;
     }
 
     const libraryParams = this.params.libraryParams;
 
-    const machineName = libraryParams?.library?.split?.(' ')[0];
+    const machineName = libraryParams?.library?.split?.(' ');
 
     if (machineName === 'H5P.Video') {
       libraryParams.params.visuals.fit = (
@@ -105,26 +90,21 @@ export default class H5PContent {
   }
 
   /**
-   * Make it easy to bubble events from child to parent.
+   * Bubble events from child to parent.
    * @param {object} origin Origin of event.
    * @param {string} eventName Name of event.
    * @param {object} target Target to trigger event on.
    */
   bubbleUp(origin, eventName, target) {
     origin.on(eventName, (event) => {
-      // Prevent target from sending event back down
       target.bubblingUpwards = true;
-
-      // Trigger event
       target.trigger(eventName, event);
-
-      // Reset
       target.bubblingUpwards = false;
     });
   }
 
   /**
-   * Make it easy to bubble events from parent to children.
+   * Bubble events from parent to children.
    * @param {object} origin Origin of event.
    * @param {string} eventName Name of event.
    * @param {object[]} targets Targets to trigger event on.
@@ -132,7 +112,7 @@ export default class H5PContent {
   bubbleDown(origin, eventName, targets) {
     origin.on(eventName, (event) => {
       if (origin.bubblingUpwards) {
-        return; // Prevent send event back down.
+        return;
       }
 
       targets.forEach((target) => {
@@ -145,6 +125,14 @@ export default class H5PContent {
   }
 
   /**
+   * Determine whether content is (scored) task.
+   * @returns {boolean} True, if content is task, else false.
+   */
+  isTask() {
+    return isInstanceTask(this.instance);
+  }
+
+  /**
    * Track scoring of contents.
    * @param {Event} event Event.
    */
@@ -154,6 +142,14 @@ export default class H5PContent {
     }
 
     this.callbacks.onAnswerStateChanged(this.getAnswerGiven());
+  }
+
+  /**
+   * Get answer given.
+   * @returns {boolean} True, if answer was given.
+   */
+  getAnswerGiven() {
+    return this.instance?.getAnswerGiven?.() ?? false;
   }
 
   /**
@@ -173,17 +169,33 @@ export default class H5PContent {
       }
     }
     else if (machineName === 'H5P.CoursePresentation') {
-      Util.callOnceVisible(this.dom, () => {
+      callOnceVisible(this.dom, () => {
         this.instance.$fullScreenButton?.get(0).remove();
       });
     }
     else if (machineName === 'H5P.InteractiveVideo') {
-      Util.callOnceVisible(this.dom, () => {
+      callOnceVisible(this.dom, () => {
         this.instance.controls?.$fullscreen.get(0).remove();
       });
     }
 
     this.isAttached = true;
+  }
+
+  /**
+   * Get DOM with H5P exercise.
+   * @returns {HTMLElement} DOM with H5P exercise.
+   */
+  getDOM() {
+    return this.dom;
+  }
+
+  /**
+   * Get xAPI data from exercises.
+   * @returns {object} XAPI data objects used to build report.
+   */
+  getXAPIData() {
+    return this.instance?.getXAPIData?.();
   }
 
   /**
@@ -215,14 +227,6 @@ export default class H5PContent {
   }
 
   /**
-   * Determine whether content is a (scored) task.
-   * @returns {boolean} True, if content is task, else false.
-   */
-  isTask() {
-    return isInstanceTask(this.instance);
-  }
-
-  /**
    * Get content title.
    * @returns {string} Content title.
    */
@@ -233,14 +237,6 @@ export default class H5PContent {
 
     return this.params.metadata?.title ||
       this.params.dictionary.get('l10n.noTitle');
-  }
-
-  /**
-   * Check if result has been submitted or input has been given.
-   * @returns {boolean} True, if answer was given.
-   */
-  getAnswerGiven() {
-    return this.instance?.getAnswerGiven?.() ?? false;
   }
 
   /**

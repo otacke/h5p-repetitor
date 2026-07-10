@@ -9,7 +9,7 @@ export const getSemanticsDefaults = (start = semantics) => {
   let defaults = {};
 
   if (!Array.isArray(start)) {
-    return defaults; // Must be array, root or list
+    return defaults;
   }
 
   start.forEach((entry) => {
@@ -35,9 +35,9 @@ export const getSemanticsDefaults = (start = semantics) => {
 };
 
 /**
- * Determine whether an H5P instance is a task.
+ * Determine whether H5P instance is task.
  * @param {H5P.ContentType} instance Instance.
- * @returns {boolean} True, if instance is a task.
+ * @returns {boolean} True, if instance is task.
  */
 export const isInstanceTask = (instance = {}) => {
   if (!instance) {
@@ -48,7 +48,7 @@ export const isInstanceTask = (instance = {}) => {
     return instance.isTask; // Content will determine if it's task on its own
   }
 
-  // Check for maxScore > 0 as indicator for being a task
+  // Check for maxScore > 0 as indicator for being task
   const hasGetMaxScore = (typeof instance.getMaxScore === 'function');
   if (hasGetMaxScore && instance.getMaxScore() > 0) {
     return true;

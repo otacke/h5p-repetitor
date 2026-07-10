@@ -1,0 +1,7 @@
+.h5p-repetitor-content-instance {
+  /* Remove fullscreen for video tags and DQ */
+  video::-webkit-media-controls-fullscreen-button,
+  .h5p-my-fullscreen-button-enter {
+    display: none;
+  }
+}

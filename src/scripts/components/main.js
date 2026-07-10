@@ -1,9 +1,17 @@
 import Screenreader from '@services/screenreader.js';
-import { extend } from '@services/util.js';
+import { extend, getLocalDateRepresentation } from '@services/util.js';
 import MessageBox from '@components/message-box/message-box.js';
 import TopBar from '@components/top-bar/top-bar.js';
-import Page from '@components/page/page.js';
+import RoundSummary from '@components/round-summary/round-summary.js';
+import PagePool from '@models/page-pool.js';
+import PageManager from '@models/page-manager.js';
+import RoundController from '@models/round-controller.js';
+import SpacedRepetitionController from '@models/spaced-repetition-controller.js';
+import { createSelector } from '@models/selectors/selector-factory.js';
 import './main.scss';
+
+/** @constant {number} NO_PAGE_SELECTED_INDEX Index for no page selected, used for initial sliding. */
+const NO_PAGE_SELECTED_INDEX = -1;
 
 /**
  * Main DOM component incl. main controller.
@@ -13,7 +21,7 @@ export default class Main {
    * @class
    * @param {object} [params] Parameters.
    * @param {object} [callbacks] Callbacks.
-   * @param {object} [callbacks.onProgressed] Callback when user progressed.
+   * @param {object} [callbacks.onProgressed] Callback on user progress.
    */
   constructor(params = {}, callbacks = {}) {
     this.params = extend({
@@ -26,8 +34,11 @@ export default class Main {
     this.handleUpdatePagePositionsEnded = this.handleUpdatePagePositionsEnded.bind(this);
     this.globalParams = this.params.globals.get('params');
     this.behaviour = this.globalParams.behaviour;
+    this.spacedRepetitionParams = this.globalParams.spacedRepetition;
+    this.isSubmitting = (this.params.globals.get('extras').isScoringEnabled ||
+      this.params.globals.get('extras').isReportingEnabled) ?? false;
 
-    this.currentPageIndex = -1;
+    this.currentPageIndex = NO_PAGE_SELECTED_INDEX;
     this.pages = [];
 
     this.dom = document.createElement('div');
@@ -42,10 +53,6 @@ export default class Main {
       return;
     }
 
-    if (this.behaviour.cycle) {
-      this.dom.classList.add('h5p-repetitor-main-cycle');
-    }
-
     if (!this.behaviour.canGoBackwards) {
       this.dom.classList.add('h5p-repetitor-main-no-backwards');
     }
@@ -54,10 +61,15 @@ export default class Main {
       this.dom.classList.add('h5p-repetitor-main-no-forward');
     }
 
-    if (this.behaviour.displayPageAnnouncement || this.behaviour.displayContentAnnouncement) {
+    if (
+      this.behaviour.displayPageAnnouncement ||
+      this.behaviour.displayRoundAnnouncement ||
+      this.behaviour.displayContentAnnouncement
+    ) {
       this.topbar = new TopBar({
         dictionary: this.params.dictionary,
         announcePage: this.behaviour.displayPageAnnouncement,
+        announceRound: this.behaviour.displayRoundAnnouncement,
         announceContent: this.behaviour.displayContentAnnouncement,
       });
       this.dom.append(this.topbar.getDOM());
@@ -67,24 +79,212 @@ export default class Main {
     this.contents.classList.add('h5p-repetitor-pages');
     this.dom.append(this.contents);
 
-    this.globalParams.content.forEach((content, index) => {
-      const page = new Page(
-        {
-          dictionary: this.params.dictionary,
-          globals: this.params.globals,
-          index: index,
-          libraryParams: content.libraryParams,
-        },
-        {
-          onAnswerStateChanged: (index, isAnswered) => {
-            this.updateNavigation();
-          },
-        },
-      );
-      this.contents.append(page.getDOM());
+    document.body.append(Screenreader.getDOM());
 
-      this.pages.push(page);
+    const previousState = this.params.globals.get('extras').previousState ?? {};
+
+    this.spacedRepetitionController = this.buildSpacedRepetitionController(previousState.spacedRepetition);
+
+    const previousPileIds = previousState.spacedRepetition?.pileIds ?? [];
+    const roundsCompleted = previousState.spacedRepetition?.manager?.roundsCompleted ?? 0;
+    const currentRoundNumber = previousState.spacedRepetition?.manager?.currentRoundNumber ?? 1;
+    const hasCompletedRounds = roundsCompleted > 0;
+
+    this.roundSummary = new RoundSummary(
+      {
+        dictionary: this.params.dictionary,
+        currentRoundNumber: currentRoundNumber,
+        mainDom: this.dom,
+      },
+      {
+        onStartNextRound: () => this.startNextRoundFromSummary(),
+        onStartOver: () => this.params.globals.get('mainInstance').resetTask(),
+      },
+    );
+
+    if (previousPileIds.length) {
+      this.startRound(this.spacedRepetitionController.restorePile(previousPileIds).getPages());
+    }
+    else if (hasCompletedRounds) {
+      // A round was already submitted in a previous session. Let the user decide when to continue.
+      this.showRoundSummary(this.spacedRepetitionController.getLastRoundResults() ?? []);
+    }
+    else {
+      this.startFirstRound();
+    }
+
+    if (this.pages.length) {
+      const previousChildrenState = previousState.children ?? [];
+      this.pages.forEach((page) => {
+        if (previousChildrenState[page.getIndex()]?.wasAnswered) {
+          page.setAnswered(true);
+        }
+      });
+
+      this.updateNavigationButtons();
+    }
+  }
+
+  /**
+   * Build model layer for spaced repetition.
+   * @param {object} [previousSpacedRepetitionState] Serialized state to restore, as returned by
+   * `SpacedRepetitionController.getCurrentState`, if any.
+   * @returns {SpacedRepetitionController} Controller tying pool, manager, selector and round control together.
+   */
+  buildSpacedRepetitionController(previousSpacedRepetitionState = {}) {
+    const pagePool = new PagePool(
+      {
+        dictionary: this.params.dictionary,
+        globals: this.params.globals,
+        contents: this.globalParams.content,
+      },
+      {
+        onAnswerStateChanged: () => {
+          this.updateNavigation();
+        },
+      },
+    );
+
+    const general = this.spacedRepetitionParams.general ?? {};
+
+    const roundController = new RoundController({
+      maxRounds: general.maxRounds,
     });
+
+    return new SpacedRepetitionController({
+      pagePool: pagePool,
+      pageManager: new PageManager(previousSpacedRepetitionState.manager),
+      selector: createSelector(this.spacedRepetitionParams),
+      roundController: roundController,
+      lastRoundResults: previousSpacedRepetitionState.lastRoundResults,
+      randomize: general.randomize,
+    });
+  }
+
+  /**
+   * Start first spaced repetition round. Revealing left to deferred call H5P core makes once content becomes
+   * visible, so this does not swipe to it itself.
+   */
+  startFirstRound() {
+    const pile = this.spacedRepetitionController.startNextRound();
+    this.startRound(pile.getPages());
+  }
+
+  /**
+   * Show round summary screen instead of round: results of round just completed, if any, current status,
+   * if allowed, button to explicitly start next round.
+   * @param {object[]} [results] Results of round just completed, one entry per page. Omitted when no freshly
+   * completed round to report, e.g. when resuming session after round was already submitted.
+   */
+  showRoundSummary(results = []) {
+    this.pages = [];
+    this.callbacks.onProgressed(this.currentPageIndex + 1); // Pseudo index, used to make H5P store state
+
+    this.currentPageIndex = NO_PAGE_SELECTED_INDEX;
+
+    this.navigation?.remove();
+    this.navigation = null;
+
+    const status = this.spacedRepetitionController.canStartNextRound();
+
+    let message;
+    switch (status.reason) {
+      case 'maxRoundsReached':
+        message = this.params.dictionary.get('l10n.roundCompletedMaxRounds');
+        break;
+      case 'finished':
+        message = this.params.dictionary.get('l10n.roundCompletedFinished');
+        break;
+      case 'waiting':
+        message = this.params.dictionary.get('l10n.roundCompletedWaiting')
+          .replace('@date', getLocalDateRepresentation(
+            this.spacedRepetitionController.getNextDueDate()));
+        break;
+      default:
+        message = (status.allowed ?
+          this.params.dictionary.get('l10n.roundCompletedReady') :
+          this.params.dictionary.get('l10n.roundCompletedFinished'));
+    }
+
+    this.roundSummary.update({
+      results: results,
+      currentRoundNumber: this.spacedRepetitionController.getCurrentRoundNumber(),
+      message: message,
+      canContinue: status.allowed,
+      masteredPagesCount: this.spacedRepetitionController.getMasteredPagesCount(),
+      totalPagesCount: this.spacedRepetitionController.getTotalPagesCount(),
+    });
+
+    this.topbar.toggle(false);
+    this.contents.innerHTML = '';
+    this.contents.append(this.roundSummary.getDOM());
+
+    this.updateAnnouncement();
+
+    Screenreader.read(message);
+    this.roundSummary.focus();
+
+    this.params.globals.get('resize')();
+  }
+
+  /**
+   * Handle user choosing to start next round from round summary screen. Round number advances as soon as user
+   * makes this choice, regardless of whether round actually turns out to be due yet.
+   */
+  startNextRoundFromSummary() {
+    this.spacedRepetitionController.advanceRound();
+    this.attemptNextRound();
+  }
+
+  /**
+   * Try to start next round.
+   */
+  attemptNextRound() {
+    const pile = this.spacedRepetitionController.startNextRound();
+
+    this.startRound(pile.getPages(), { announce: true });
+    this.swipeTo(0, { force: true });
+
+    /*
+     * The very first page of a freshly started round was never painted at its initial position, so its CSS
+     * transition (and the transitionend-triggered announcement update) may not fire. Update directly as well.
+     */
+    this.updateAnnouncement();
+  }
+
+  /**
+   * Start presenting round: render pages and (re)build navigation for them.
+   * @param {object[]} pages Pages to present, in order.
+   * @param {object} [options] Options.
+   * @param {boolean} [options.announce] If true, announce new round to screen readers.
+   */
+  startRound(pages, options = {}) {
+    this.pages = pages;
+    this.currentPageIndex = NO_PAGE_SELECTED_INDEX;
+
+    this.contents.innerHTML = '';
+    this.topbar.toggle(true);
+    this.pages.forEach((page) => {
+      // Pages can be reused across rounds and may still carry DOM state from a previous round.
+      page.setPosition(1); // 1 = Future to allow initial slide in from right
+      page.update({ visible: true });
+      this.contents.append(page.getDOM());
+    });
+
+    this.buildNavigation();
+
+    if (options.announce) {
+      Screenreader.read(this.params.dictionary.get('l10n.roundStarted'));
+    }
+
+    this.params.globals.get('resize')();
+  }
+
+  /**
+   * Build (or rebuild) navigation footer for current pages.
+   */
+  buildNavigation() {
+    this.navigation?.remove();
 
     const initialQuestion = 0; // Does not need to be set to previous state, call to swipeTo will come
 
@@ -93,7 +293,12 @@ export default class Main {
       previousButtonAria: this.params.dictionary.get('a11y.previousContent'),
       nextButton: this.params.dictionary.get('l10n.next'),
       nextButtonAria: this.params.dictionary.get('a11y.nextContent'),
-      lastButton: (self.isSubmitting) ? '_submit_' : '_finish_', // TODO
+      lastButton: this.isSubmitting ?
+        this.params.dictionary.get('l10n.submit') :
+        this.params.dictionary.get('l10n.finish'),
+      lastButtonAria: this.isSubmitting ?
+        this.params.dictionary.get('a11y.submit') :
+        this.params.dictionary.get('a11y.finish'),
       jumpToQuestion: this.params.dictionary.get('a11y.jumpToQuestion')
         .replace('@current', '%d')
         .replace('@total', '%total'),
@@ -128,38 +333,28 @@ export default class Main {
       }),
     });
     this.dom.append(this.navigation);
-
-    // Screenreader for polite screen reading
-    document.body.append(Screenreader.getDOM());
-
-    const previousChildrenState = this.params.globals.get('extras').previousState?.children ?? [];
-    previousChildrenState.forEach((childState, index) => {
-      if (childState.wasAnswered) {
-        this.pages[index].setAnswered(true);
-      }
-    });
-
-    this.updateNavigationButtons();
   }
 
   /**
    * Update navigation buttons.
    */
   updateNavigationButtons() {
-    if (this.behaviour.canSkipForward) {
-      return;
-    }
-
     const currentIndex = this.getCurrentPageIndex();
     const currentPage = this.pages[currentIndex];
     if (!currentPage) {
       return;
     }
 
-    const canCycle = this.behaviour.cycle;
-    const isLastButton = currentIndex + 1 === this.pages.length;
+    const isLastPageOfRound = currentIndex === this.pages.length - 1;
+    const wereAllPagesAnswered = this.pages.every((page) => page.wasAnswered());
 
-    const shouldNextButtonShow = currentPage.wasAnswered() && (canCycle || !isLastButton);
+    this.navigation.setCanShowLast(isLastPageOfRound && wereAllPagesAnswered);
+
+    if (this.behaviour.canSkipForward) {
+      return;
+    }
+
+    const shouldNextButtonShow = currentPage.wasAnswered() && !isLastPageOfRound;
     this.navigation.classList.toggle('next-is-visible', shouldNextButtonShow);
   }
 
@@ -184,7 +379,7 @@ export default class Main {
    */
   updateNavigationDots() {
     const currentIndex = this.getCurrentPageIndex();
-    if (currentIndex === -1) {
+    if (currentIndex === NO_PAGE_SELECTED_INDEX) {
       return;
     }
 
@@ -202,19 +397,13 @@ export default class Main {
         const referencePage = (index === currentIndex + 1) ? currentPage : page;
         this.updateNavigationDotEnabledState(index, referencePage.wasAnswered());
       }
-    });
 
-    if (!this.behaviour.showProgressOnNavigationDots) {
-      return;
-    }
-
-    this.pages.forEach((page, index) => {
       this.navigation.progressDots.toggleFilledDot(index, page.wasAnswered());
     });
   }
 
   /**
-   * Toggle enabled state of navigation dot.
+   * Toggle navigation dot enabled state.
    * @param {number} index Index of dot to update.
    * @param {boolean} enabled True to enable, false to disable.
    */
@@ -224,7 +413,7 @@ export default class Main {
   }
 
   /**
-   * Handle ProgressDotClick on H5P.Component.Navigation
+   * Handle ProgressDotClick on H5P.Component.Navigation.
    * @param {PointerEvent} event Pointer event.
    * @param {number} index Index of position.
    */
@@ -242,8 +431,8 @@ export default class Main {
       return;
     }
 
-    if (this.isSwiping || !this.behaviour.cycle && this.currentPageIndex <= 0) {
-      return; // Swiping or already at outer left
+    if (this.isSwiping || this.currentPageIndex <= 0) {
+      return;
     }
 
     this.swipeTo(this.currentPageIndex - 1, { force: true });
@@ -261,11 +450,26 @@ export default class Main {
       return;
     }
 
-    if (this.isSwiping || !this.behaviour.cycle && this.currentPageIndex === this.pages.length - 1) {
-      return; // Swiping or already at outer right
+    if (this.isSwiping) {
+      return;
+    }
+
+    const isLastPageOfRound = this.currentPageIndex === this.pages.length - 1;
+
+    if (isLastPageOfRound) {
+      this.handleRoundEnd();
+      return;
     }
 
     this.swipeTo(this.currentPageIndex + 1, { force: true });
+  }
+
+  /**
+   * Handle reaching end of current spaced repetition round: submit results and show summary screen.
+   */
+  handleRoundEnd() {
+    this.spacedRepetitionController.submitCurrentRound();
+    this.showRoundSummary(this.spacedRepetitionController.getLastRoundResults() ?? []);
   }
 
   /**
@@ -273,14 +477,16 @@ export default class Main {
    * @param {number} [to] Page number to swipe to.
    * @param {object} [options] Options.
    * @param {boolean} [options.skipFocus] If true, skip focus after swiping.
-   * @param {boolean} [options.force] If true, ignore checks.
+   * @param {boolean} [options.force] If true, skip checks.
    */
-  swipeTo(to = -1, options = {}) {
-    if (this.isSwiping || !this.behaviour.cycle && (to < 0 || to > this.pages.length - 1)) {
-      return;
+  swipeTo(to = NO_PAGE_SELECTED_INDEX, options = {}) {
+    if (!this.pages.length) {
+      return; // Nothing to show right now, e.g. a round outcome message is displayed instead
     }
 
-    to = (to + this.pages.length) % this.pages.length;
+    if (this.isSwiping || to < 0 || to > this.pages.length - 1) {
+      return;
+    }
 
     const from = this.currentPageIndex;
     if (from === to || !this.isNavigationAllowed(from, to, options)) {
@@ -301,7 +507,7 @@ export default class Main {
   }
 
   /**
-   * Check if navigation from one page to another is allowed.
+   * Check navigation from one page to another is allowed.
    * @param {number} from Index of current page.
    * @param {number} to Index of target page.
    * @param {object} options Options.
@@ -391,21 +597,25 @@ export default class Main {
       return;
     }
 
+    const currentPage = this.pages[this.currentPageIndex];
+
+    if (this.behaviour.displayRoundAnnouncement) {
+      this.topbar.setIndicatorRound(this.spacedRepetitionController.getCurrentRoundNumber());
+    }
+
     if (this.behaviour.displayPageAnnouncement) {
-      this.topbar.setIndicatorCurrent(this.currentPageIndex + 1);
-      this.topbar.setIndicatorTotal(this.pages.length);
+      // Clear rather than leave stale values from a previous round when there is no current page to report.
+      this.topbar.setIndicatorCurrent(currentPage ? this.currentPageIndex + 1 : undefined);
+      this.topbar.setIndicatorTotal(currentPage ? this.pages.length : undefined);
     }
 
     if (this.behaviour.displayContentAnnouncement) {
-      const page = this.pages[this.currentPageIndex];
-      if (page) {
-        this.topbar.setTitle(page.getTitle());
-      }
+      this.topbar.setTitle(currentPage ? currentPage.getTitle() : '');
     }
   }
 
   /**
-   * Mark current page as answered if it holds no task.
+   * Mark current page as answered if holds no task.
    */
   autoMarkCurrentPageAnswered() {
     const currentPage = this.pages[this.currentPageIndex];
@@ -423,15 +633,29 @@ export default class Main {
   }
 
   /**
+   * Build content state for every page, indexed by page id. Pages that were never drawn (e.g. not due yet in
+   * spaced repetition round) get empty state, since H5PContent expects entry to exist for every page id.
+   * @returns {object[]} Content state, indexed by page id.
+   */
+  buildChildrenState() {
+    const children = this.globalParams.content.map(() => ({}));
+
+    this.spacedRepetitionController.getAllDrawnPages().forEach((page) => {
+      children[page.getIndex()] = page.getCurrentState();
+    });
+
+    return children;
+  }
+
+  /**
    * Return H5P core's call to store current state.
    * @returns {object} Current state.
    */
   getCurrentState() {
     return {
       pageIndex: this.currentPageIndex,
-      children: this.pages.map((page) => {
-        return page.getCurrentState();
-      }),
+      children: this.buildChildrenState(),
+      spacedRepetition: this.spacedRepetitionController.getCurrentState(),
     };
   }
 
@@ -476,16 +700,16 @@ export default class Main {
   }
 
   /**
-   * Reset.
+   * Discard all progress and restart from the first page.
    */
   reset() {
-    this.pages.forEach((page) => {
-      page.reset();
-    });
-
+    // Rebuild pool, manager and controller from scratch to discard all progress and exercise state.
+    this.spacedRepetitionController = this.buildSpacedRepetitionController();
+    this.startFirstRound();
     this.swipeTo(0, { skipFocus: true, force: true });
 
-    this.updateNavigation();
+    // The freshly started round's first page may not fire a transitionend event, see startNextRoundFromSummary.
+    this.updateAnnouncement();
   }
 
   /**

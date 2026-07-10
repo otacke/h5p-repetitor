@@ -1,11 +1,14 @@
 .h5p-repetitor-top-bar {
-  align-items: center;
   background-color: var(--h5p-theme-ui-base);
   border-bottom: 1px solid var(--h5p-theme-stroke-1);
   box-sizing: border-box;
   font-size: var(--h5p-theme-font-size-m);
   overflow: hidden;
   padding: var(--h5p-theme-spacing-s);
+
+  &.display-none {
+    display: none;
+  }
 
   .h5p-repetitor-page-announcer {
     align-items: center;
