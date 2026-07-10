@@ -2,7 +2,7 @@
   {
     "name": "content",
     "type": "list",
-    "label": "List of contents",
+    "label": "Contents",
     "importance": "high",
     "widgets": [
       {
@@ -216,7 +216,7 @@
           {
             "name": "weightStaleness",
             "type": "number",
-            "label": "Weight: time since last attempt",
+            "label": "Weight: time since last attempt (more time gets higher priority)",
             "default": 1,
             "min": 0
           },

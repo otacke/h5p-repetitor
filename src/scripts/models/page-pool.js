@@ -1,13 +1,7 @@
 import { extend } from '@services/util.js';
 import Page from '@components/page/page.js';
 
-/**
- * Catalog of all potential pages for spaced repetition.
- *
- * PagePool only knows page definitions and how to turn one into live `Page` instance. It holds no progress
- * information of its own, and it instantiates page's exercise lazily, on first draw, so that having large
- * pool does not mean instantiating every exercise up front.
- */
+/** Spaced repetition page catalog; PagePool knows definitions, instantiates Page instances lazily on first draw. */
 export default class PagePool {
   /**
    * @class

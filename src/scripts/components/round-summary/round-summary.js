@@ -1,10 +1,7 @@
 import { extend } from '@services/util.js';
 import './round-summary.scss';
 
-/**
- * Screen shown between spaced repetition rounds. Summarizes round that was just completed, when data for it
- * is available, and lets user explicitly start next round if one is allowed right now.
- */
+/** Screen between spaced repetition rounds. Summarizes completed round, shows results, lets user start next round. */
 export default class RoundSummary {
   /**
    * @class

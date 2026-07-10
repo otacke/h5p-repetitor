@@ -1,11 +1,7 @@
 import PagePile from './page-pile.js';
 import { randomize } from '@services/util.js';
 
-/**
- * Ties page pool, page manager, page selector and round controller together, exposes small,
- * round-oriented interface for `Main` to drive: start round, submit results, ask whether another round may
- * follow.
- */
+/** Orchestrates four subsystems behind a round-centric facade. */
 export default class SpacedRepetitionController {
   /**
    * @class
@@ -23,16 +19,14 @@ export default class SpacedRepetitionController {
   }
 
   /**
-   * Move displayed round number on, once user chooses to leave current round's results behind and
-   * work towards next round, regardless of whether next round has anything due yet.
+   * Move displayed round number on, once user chooses to leave current round's results behind.
    */
   advanceRound() {
     this.params.pageManager.advanceRound();
   }
 
   /**
-   * Determine whether new round may start. Checks whether any pages are due (via selector) and whether
-   * maximum number of rounds has been reached.
+   * Determine whether new round may start.
    * @param {Date} [now] Reference date. Defaults to now.
    * @returns {object} Result with `allowed` and, if not allowed, `reason`.
    */
@@ -61,8 +55,7 @@ export default class SpacedRepetitionController {
   }
 
   /**
-   * Get round number to display (1-based). Stays at number of round whose results are being shown
-   * until user chooses to move on, see `advanceRound`.
+   * Get round number to display. Stays at number of round whose results are being shown until user chooses to move on.
    * @returns {number} Round number to display.
    */
   getCurrentRoundNumber() {
@@ -98,9 +91,7 @@ export default class SpacedRepetitionController {
   }
 
   /**
-   * Get number of pages that have reached mastery so far, across whole pool, not just pages that
-   * were part of most recently completed round. What counts as "mastered" depends on selector's
-   * algorithm, see `PageSelector.isPageMastered`.
+   * Get number of pages that have reached mastery so far across whole pool.
    * @returns {number} Number of pages mastered.
    */
   getMasteredPagesCount() {
@@ -140,8 +131,7 @@ export default class SpacedRepetitionController {
   }
 
   /**
-   * Restore in-progress pile, e.g. after reloading page, without drawing new one or resetting any
-   * exercise.
+   * Restore in-progress pile, e.g. after reloading page, without drawing new one or resetting any exercise.
    * @param {number[]} ids Ids of pages that were in pile.
    * @returns {PagePile} Restored pile.
    */
@@ -178,10 +168,7 @@ export default class SpacedRepetitionController {
   }
 
   /**
-   * Submit results of current pile's round and update progress accordingly. Resets every page of
-   * round right away, so page that is not drawn again immediately does not keep reporting this round's
-   * answers via `getCurrentState` until it happens to be redrawn. Remembers results so round summary
-   * can be reconstructed identically after reload, see `getLastRoundResults`.
+   * Submit results of current pile's round and update progress accordingly.
    * @param {Date} [now] Reference date. Defaults to now.
    */
   submitCurrentRound(now = new Date()) {

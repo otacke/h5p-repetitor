@@ -1,0 +1,334 @@
+{
+  "semantics": [
+    {
+      "label": "Contents",
+      "widgets": [
+        {
+          "label": "Default"
+        }
+      ],
+      "entity": "content",
+      "field": {
+        "fields": [
+          {
+            "label": "Content"
+          },
+          {}
+        ]
+      }
+    },
+    {
+      "label": "Spaced repetition",
+      "fields": [
+        {
+          "label": "Repetition mode",
+          "description": "Determines how contents are drawn into repetition rounds, based on how well they were answered before.",
+          "importantDescription": {
+            "example": "<ul><li><strong>Leitner system:</strong> Review exercises on expanding intervals, moving correctly answered exercises to higher “boxes” (longer gaps) and sending incorrect ones back to lower boxes (shorter gaps).</li><li><strong>Fixed-interval:</strong> Repeating the same practice set after a constant time delay each session (e.g., every 3 days) regardless of performance.</li><li><strong>Repeat until mastered:</strong> Practice approach where you keep repeating an exercise in successive attempts until you can perform it to a defined mastery level, then you move on.</li><li><strong>Custom:</strong> Exercises by ranking items using time since last attempt, last score and other weighted parameters.</li></ul>",
+            "l10n": {
+              "example": "Modes"
+            }
+          },
+          "options": [
+            {
+              "label": "Leitner system"
+            },
+            {
+              "label": "Fixed-interval"
+            },
+            {
+              "label": "Repeat until mastered"
+            },
+            {
+              "label": "Custom"
+            }
+          ]
+        },
+        {
+          "label": "Leitner settings",
+          "fields": [
+            {
+              "label": "Box intervals (days)",
+              "description": "One entry per box. The number of entries determines the number of boxes. Each value is the number of days to wait before a content in that box is due again.",
+              "entity": "box",
+              "field": {
+                "label": "Days"
+              }
+            },
+            {
+              "label": "Consecutive full scores required to advance a box"
+            }
+          ]
+        },
+        {
+          "label": "Fixed interval settings",
+          "fields": [
+            {
+              "label": "Interval (days)",
+              "description": "Number of days to wait before showing a content again."
+            },
+            {
+              "label": "Dummy"
+            }
+          ]
+        },
+        {
+          "label": "Repeat until mastered settings",
+          "fields": [
+            {
+              "label": "Pass threshold (%)"
+            },
+            {
+              "label": "Consecutive passes required to master a content"
+            },
+            {
+              "label": "Interval (days)",
+              "description": "Number of days to wait before showing a content again. Set to 0 for no waiting."
+            }
+          ]
+        },
+        {
+          "label": "Custom (weighted priority) settings",
+          "fields": [
+            {
+              "label": "Weight: time since last attempt (more time gets higher priority)"
+            },
+            {
+              "label": "Weight: last score (lower score gets higher priority)"
+            },
+            {
+              "label": "Weight: average score (lower average gets higher priority)"
+            },
+            {
+              "label": "Weight: number of attempts (fewer attempts get higher priority)"
+            },
+            {
+              "label": "Interval (days)",
+              "description": "Number of days to wait before showing a content again. Set to 0 for no waiting."
+            }
+          ]
+        },
+        {
+          "label": "General settings",
+          "description": "Settings that apply regardless of the chosen repetition mode.",
+          "fields": [
+            {
+              "label": "Randomize exercises"
+            },
+            {
+              "label": "Maximum contents per round",
+              "description": "Maximum number of contents to include in a repetition round. Leave empty to include all contents that are due."
+            },
+            {
+              "label": "Maximum number of rounds",
+              "description": "Leave empty or set to 0 for an unlimited number of rounds."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Behavioural settings",
+      "fields": [
+        {
+          "label": "User can go backwards",
+          "description": "If checked, the user can go backwards to a previous question."
+        },
+        {
+          "label": "User can skip forward",
+          "description": "If checked, the user can skip forward without answering the current question."
+        },
+        {
+          "label": "Override \"Show Solution\" button",
+          "description": "This option determines if the \"Show Solution\" button will be shown for all questions, hidden for all questions or configured for each question individually.",
+          "options": [
+            {
+              "label": "Use content setting"
+            },
+            {
+              "label": "Show for all"
+            },
+            {
+              "label": "Hide for all"
+            }
+          ]
+        },
+        {
+          "label": "Override \"Retry\" button",
+          "description": "This option determines if the \"Retry\" button will be shown for all questions, hidden for all questions or configured for each question individually.",
+          "options": [
+            {
+              "label": "Use content setting"
+            },
+            {
+              "label": "Show for all"
+            },
+            {
+              "label": "Hide for all"
+            }
+          ]
+        },
+        {
+          "label": "Display current page in toolbar"
+        },
+        {
+          "label": "Display current round in toolbar"
+        },
+        {
+          "label": "Display content title in toolbar"
+        }
+      ]
+    },
+    {
+      "label": "User interface",
+      "fields": [
+        {
+          "label": "Round template",
+          "description": "@round is a placeholder and will be replaced with the respective value.",
+          "default": "Round @round"
+        },
+        {
+          "label": "Content without a title",
+          "default": "Untitled"
+        },
+        {
+          "label": "Label for \"Next\" button",
+          "default": "Next"
+        },
+        {
+          "label": "Label for \"Submit\" button",
+          "default": "Submit"
+        },
+        {
+          "label": "Label for \"Finish\" button",
+          "default": "Finish"
+        },
+        {
+          "label": "Label for \"Previous\" button",
+          "default": "Previous"
+        },
+        {
+          "label": "No contents",
+          "default": "It seems that no valid contents were set."
+        },
+        {
+          "label": "New round started (screen reader text)",
+          "default": "New round started."
+        },
+        {
+          "label": "Next round not available yet",
+          "default": "Come back @date to continue with the next round.",
+          "description": "@date is a placeholder and will be replaced by the date and time the next round becomes available."
+        },
+        {
+          "label": "All rounds completed",
+          "default": "You have completed all the repetition rounds. Well done!"
+        },
+        {
+          "label": "Maximum number of rounds reached",
+          "default": "You have reached the maximum number of repetition rounds."
+        },
+        {
+          "label": "Label for \"Start round\" button",
+          "description": "@number is a placeholder and will be replaced with the respective value.",
+          "default": "Start round @number"
+        },
+        {
+          "label": "Label for \"Start over\" button",
+          "description": "Shown on the round summary screen. Resets all spaced repetition progress.",
+          "default": "Start over"
+        },
+        {
+          "label": "Confirmation dialog text for starting over",
+          "description": "Shown in a confirmation dialog before resetting all progress.",
+          "default": "Are you sure you want to start over? All progress will be lost."
+        },
+        {
+          "label": "Round summary header",
+          "default": "Summary"
+        },
+        {
+          "label": "Round summary number",
+          "description": "@round is a placeholder and will be replaced with the respective value.",
+          "default": "Round @round"
+        },
+        {
+          "label": "Passed this round",
+          "default": "Passed this round"
+        },
+        {
+          "label": "Failed this round",
+          "default": "Failed this round"
+        },
+        {
+          "label": "Overall results",
+          "default": "Overall results"
+        },
+        {
+          "label": "Exercises you have completed",
+          "default": "Exercises you have completed"
+        },
+        {
+          "label": "X of Y",
+          "description": "@x and @y are placeholders and will be replaced with the respective values",
+          "default": "@x/@y"
+        },
+        {
+          "label": "Round completed, next round available",
+          "default": "Round completed! You can start the next round now."
+        }
+      ]
+    },
+    {
+      "label": "Accessibility texts",
+      "fields": [
+        {
+          "label": "Previous content",
+          "default": "Go to previous content."
+        },
+        {
+          "label": "Next content",
+          "default": "Go to next content."
+        },
+        {
+          "label": "Finish round and submit and view results",
+          "default": "Finish this round, submit your results and view them."
+        },
+        {
+          "label": "Finish round",
+          "default": "Finish this round and view the results."
+        },
+        {
+          "label": "Moved to page",
+          "default": "Moved to page @current of @total.",
+          "description": "@current and @total are placeholders and will be replaced by the respective values."
+        },
+        {
+          "label": "Top navigation",
+          "default": "Top navigation bar"
+        },
+        {
+          "label": "Bottom navigation",
+          "default": "Bottom navigation bar"
+        },
+        {
+          "label": "Current question",
+          "default": "Current question"
+        },
+        {
+          "label": "Answered",
+          "default": "Answered"
+        },
+        {
+          "label": "Unanswered",
+          "default": "Unanswered"
+        },
+        {
+          "label": "Content @current of @total",
+          "default": "Content @current of @total",
+          "description": "@current and @total are placeholders and will be replaced by the respective values."
+        }
+      ]
+    }
+  ]
+}

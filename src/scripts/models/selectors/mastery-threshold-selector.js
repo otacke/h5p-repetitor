@@ -7,10 +7,7 @@ const DEFAULT_MASTERY_PASS_THRESHOLD_PERCENT = 80;
 /** @constant {number} DEFAULT_MASTERY_REQUIRED_PASSES Default consecutive passes required to master a page. */
 const DEFAULT_MASTERY_REQUIRED_PASSES = 2;
 
-/**
- * Drilling selector: a page keeps being drawn into every round until it was answered above a pass threshold
- * often enough in a row, then it is retired.
- */
+/** Drilling selector: page retried each round until passed enough consecutive times, then retired. */
 export default class MasteryThresholdSelector extends PageSelector {
   /**
    * @class

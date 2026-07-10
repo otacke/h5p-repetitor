@@ -1,7 +1,4 @@
-/**
- * Decides whether new repetition round may start at all, independently of which pages `PageSelector` would
- * actually pick for it: is maximum number of rounds already reached?
- */
+/** Decides whether new repetition round may start, independent of pages `PageSelector` picks: max rounds reached? */
 export default class RoundController {
   /**
    * @class

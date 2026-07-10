@@ -13,9 +13,7 @@ import './main.scss';
 /** @constant {number} NO_PAGE_SELECTED_INDEX Index for no page selected, used for initial sliding. */
 const NO_PAGE_SELECTED_INDEX = -1;
 
-/**
- * Main DOM component incl. main controller.
- */
+/** Main DOM component incl. main controller. */
 export default class Main {
   /**
    * @class
@@ -127,8 +125,7 @@ export default class Main {
 
   /**
    * Build model layer for spaced repetition.
-   * @param {object} [previousSpacedRepetitionState] Serialized state to restore, as returned by
-   * `SpacedRepetitionController.getCurrentState`, if any.
+   * @param {object} [previousSpacedRepetitionState] Serialized state to restore.
    * @returns {SpacedRepetitionController} Controller tying pool, manager, selector and round control together.
    */
   buildSpacedRepetitionController(previousSpacedRepetitionState = {}) {
@@ -161,20 +158,15 @@ export default class Main {
     });
   }
 
-  /**
-   * Start first spaced repetition round. Revealing left to deferred call H5P core makes once content becomes
-   * visible, so this does not swipe to it itself.
-   */
+  /** Start first round, skipping swipe to let H5P core handle deferred reveal. */
   startFirstRound() {
     const pile = this.spacedRepetitionController.startNextRound();
     this.startRound(pile.getPages());
   }
 
   /**
-   * Show round summary screen instead of round: results of round just completed, if any, current status,
-   * if allowed, button to explicitly start next round.
-   * @param {object[]} [results] Results of round just completed, one entry per page. Omitted when no freshly
-   * completed round to report, e.g. when resuming session after round was already submitted.
+   * Show round summary screen with completed round results, current status, and next round button.
+   * @param {object[]} [results] Results of round just completed, one entry per page.
    */
   showRoundSummary(results = []) {
     this.pages = [];
@@ -227,10 +219,7 @@ export default class Main {
     this.params.globals.get('resize')();
   }
 
-  /**
-   * Handle user choosing to start next round from round summary screen. Round number advances as soon as user
-   * makes this choice, regardless of whether round actually turns out to be due yet.
-   */
+  /** Advance round number immediately when user confirms from summary screen. */
   startNextRoundFromSummary() {
     this.spacedRepetitionController.advanceRound();
     this.attemptNextRound();
@@ -633,8 +622,7 @@ export default class Main {
   }
 
   /**
-   * Build content state for every page, indexed by page id. Pages that were never drawn (e.g. not due yet in
-   * spaced repetition round) get empty state, since H5PContent expects entry to exist for every page id.
+   * Build content state for every page, indexed by page id.
    * @returns {object[]} Content state, indexed by page id.
    */
   buildChildrenState() {
@@ -703,7 +691,6 @@ export default class Main {
    * Discard all progress and restart from the first page.
    */
   reset() {
-    // Rebuild pool, manager and controller from scratch to discard all progress and exercise state.
     this.spacedRepetitionController = this.buildSpacedRepetitionController();
     this.startFirstRound();
     this.swipeTo(0, { skipFocus: true, force: true });

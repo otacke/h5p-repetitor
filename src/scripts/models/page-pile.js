@@ -1,7 +1,4 @@
-/**
- * A pile is the set of pages drawn from the pool for the current repetition round, in presentation order. It is a
- * thin, read-only wrapper: all it does is remember which pages belong to the round and in what order.
- */
+/** Tracks which pages belong to the current round and their presentation order. */
 export default class PagePile {
   /**
    * @class

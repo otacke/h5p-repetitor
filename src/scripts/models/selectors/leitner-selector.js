@@ -5,11 +5,7 @@ import { extend } from '@services/util.js';
 // eslint-disable-next-line no-magic-numbers
 const DEFAULT_BOX_INTERVALS_DAYS = [1, 2, 3, 7, 14, 30];
 
-/**
- * Leitner-style selector. Every page sits in a box. A page moves up a box once it reached a full score often
- * enough in a row, and drops back to the first box after any imperfect attempt. Each box has its own waiting
- * period before a page in it is due again.
- */
+/** Leitner-style: pages advance on consecutive perfect passes, drop to box one on failure, each box has own interval */
 export default class LeitnerSelector extends PageSelector {
   /**
    * @class

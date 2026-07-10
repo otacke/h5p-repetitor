@@ -3,13 +3,7 @@ import { getScoreRatio } from '@services/util.js';
 /** @constant {number} MS_PER_DAY Number of milliseconds in a day. */
 export const MS_PER_DAY = 86400000;
 
-/**
- * Keeps track of spaced repetition progress: per-page attempt history, per-page selector state (e.g. Leitner
- * box) and overall round bookkeeping.
- *
- * PageManager does not know about any particular repetition algorithm. It only stores raw facts and exposes
- * derived, generic helpers. Selectors combine those helpers into whatever priority logic they implement.
- */
+/** Stores per-page attempt history and selector state, exposes generic helpers for selector logic. */
 export default class PageManager {
   /**
    * @class

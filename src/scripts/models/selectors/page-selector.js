@@ -1,8 +1,4 @@
-/**
- * Base class for page selectors. Selector decides which pages should be drawn into next repetition round,
- * and how page's progress is updated once round was completed. Concrete algorithms (Leitner, fixed
- * interval, ...) extend this class.
- */
+/** Base class deciding which pages enter next round and updating progress after completion. */
 import { MS_PER_DAY } from '@models/page-manager.js';
 import { getScoreRatio as computeScoreRatio } from '@services/util.js';
 
@@ -17,8 +13,7 @@ export default class PageSelector {
   }
 
   /**
-   * Select ids of pages that should be drawn for next round. Subclasses can override `selectNextPile`
-   * or `isPageDue` for custom logic.
+   * Select pages for next round, subclasses override selectNextPile or isPageDue for custom logic.
    * @param {number[]} ids Ids of all pages in pool.
    * @param {object} pageManager Page manager to read progress from.
    * @param {Date} [now] Reference date. Defaults to now.
@@ -43,8 +38,7 @@ export default class PageSelector {
   }
 
   /**
-   * Update progress once round has been submitted. Records raw attempts by default. Subclasses that need
-   * extra bookkeeping (e.g. Leitner box) should call this base implementation and then update own state.
+   * Record raw attempts after round submission, subclasses update own state after calling this.
    * @param {object} pageManager Page manager to update.
    * @param {object[]} results One result per page in completed round.
    * @param {number} results[].id Page id.
@@ -58,8 +52,7 @@ export default class PageSelector {
   }
 
   /**
-   * Determine whether algorithm has natural end and every page has reached it, e.g. all cards graduated
-   * from Leitner system's last box. Defaults to false: most algorithms just keep repeating indefinitely.
+   * True when algorithm reached natural end, e.g. all pages graduated from last box.
    * @param {number[]} ids Ids of all pages in pool.
    * @param {object} pageManager Page manager to read progress from.
    * @returns {boolean} True, if there is nothing left to repeat, ever.
@@ -69,10 +62,7 @@ export default class PageSelector {
   }
 
   /**
-   * Determine whether single page has reached this algorithm's notion of mastery, e.g. graduated from
-   * Leitner system's last box. Defaults to false, matching `isFinished`'s default: most algorithms have no such
-   * concept and just keep repeating page indefinitely. Subclasses that do have one should override this and
-   * may then express `isFinished` in terms of it.
+   * Check whether page reached mastery, default false, subclasses override.
    * @param {number} id Page id.
    * @param {object} pageManager Page manager to read progress from.
    * @returns {boolean} True, if page is mastered.
@@ -82,8 +72,7 @@ export default class PageSelector {
   }
 
   /**
-   * Get score ratio for score/maxScore pair. Contents without task (maxScore 0) count as full pass,
-   * since nothing to get wrong.
+   * Get score ratio for score/maxScore pair. Contents without task (maxScore 0) count as full pass.
    * @param {number} score Score reached.
    * @param {number} maxScore Maximum possible score.
    * @returns {number} Score ratio between 0 and 1.
@@ -93,10 +82,8 @@ export default class PageSelector {
   }
 
   /**
-   * Get score ratio required to count attempt as pass. Defaults to full score, since most algorithms
-   * only ever progress page after perfect attempt. Subclasses with author-configurable threshold, e.g.
-   * mastery-based one, should override this.
-   * @returns {number} Pass threshold ratio between 0 and 1.
+   * Get pass threshold ratio. Defaults to full score. Subclasses should override for configurable thresholds.
+   * @returns {number} Threshold ratio.
    */
   getPassThreshold() {
     return 1;
@@ -113,8 +100,7 @@ export default class PageSelector {
   }
 
   /**
-   * Get date when page will next be due. Returns null if page is mastered/retired and will never be
-   * due again. Returns now if page is already due or never was attempted.
+   * Get next due date, null when mastered/retired, now when never attempted.
    * @param {number} id Page id.
    * @param {object} pageManager Page manager to read progress from.
    * @param {Date} now Reference date.
@@ -148,8 +134,7 @@ export default class PageSelector {
   }
 
   /**
-   * Limit selection of due page ids to configured maximum, keeping most overdue ones. Pages that were
-   * never attempted are considered most overdue of all.
+   * Limit selection of due page ids to configured maximum, keeping most overdue ones.
    * @param {number[]} ids Ids that are due.
    * @param {object} pageManager Page manager to read attempt history from.
    * @param {Date} now Reference date to compute staleness against.

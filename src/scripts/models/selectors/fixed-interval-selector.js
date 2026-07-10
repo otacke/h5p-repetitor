@@ -4,9 +4,7 @@ import { extend } from '@services/util.js';
 /** @constant {number} DEFAULT_FIXED_INTERVAL_DAYS Default fixed interval in days. */
 const DEFAULT_FIXED_INTERVAL_DAYS = 1;
 
-/**
- * Fixed-interval selector: pages become due a fixed number of days after their last attempt.
- */
+/** Fixed-interval selector: pages become due a fixed number of days after their last attempt. */
 export default class FixedIntervalSelector extends PageSelector {
   /**
    * @class

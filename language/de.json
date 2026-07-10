@@ -1,0 +1,334 @@
+{
+  "semantics": [
+    {
+      "label": "Inhalte",
+      "widgets": [
+        {
+          "label": "Standard"
+        }
+      ],
+      "entity": "Inhalt",
+      "field": {
+        "fields": [
+          {
+            "label": "Inhalt"
+          },
+          {}
+        ]
+      }
+    },
+    {
+      "label": "Spaced repetition",
+      "fields": [
+        {
+          "label": "Wiederholungsmodus",
+          "description": "Bestimmt, wie Inhalte den Wiederholungsrunden zugeordnet werden, basierend auf früheren Antworten.",
+          "importantDescription": {
+            "example": "<ul><li><strong>Leitner-System:</strong> Übungen wiederholen mit zunehmenden Abständen; korrekt beantwortete Übungen wandern in höhere \"Kästen\" (längere Pausen), falsche zurück in niedrigere Kästen (kürzere Pausen).</li><li><strong>Festes Intervall:</strong> Dieselbe Übungsmenge nach einer festen Zeitspanne wiederholen (z. B. alle 3 Tage), unabhängig vom Leistungsstand.</li><li><strong>Wiederholen bis gemeistert:</strong> Eine Übung so lange wiederholen, bis sie sicher beherrscht wird, dann weiter.</li><li><strong>Benutzerdefiniert:</strong> Übungen nach Zeit seit dem letzten Versuch, letzter Punktzahl und anderen gewichteten Parametern sortieren.</li></ul>",
+            "l10n": {
+              "example": "Modi"
+            }
+          },
+          "options": [
+            {
+              "label": "Leitner-System"
+            },
+            {
+              "label": "Festes Intervall"
+            },
+            {
+              "label": "Wiederholen bis gemeistert"
+            },
+            {
+              "label": "Benutzerdefiniert"
+            }
+          ]
+        },
+        {
+          "label": "Einstellungen für \"Leitner\"",
+          "fields": [
+            {
+              "label": "Intervalle je Kasten (Tage)",
+              "description": "Ein Eintrag pro Kasten. Die Anzahl der Einträge bestimmt die Anzahl der Kästen. Jeder Wert gibt die Anzahl der Tage an, bevor ein Inhalt in diesem Kasten wieder fällig ist.",
+              "entity": "Kasten",
+              "field": {
+                "label": "Tage"
+              }
+            },
+            {
+              "label": "Aufeinanderfolgende volle Punktzahlen zum Aufrücken zum nächsten Kasten"
+            }
+          ]
+        },
+        {
+          "label": "Einstellungen für \"Festes Intervall\"",
+          "fields": [
+            {
+              "label": "Intervall (Tage)",
+              "description": "Anzahl der Tage, die vergehen sollen, bevor ein Inhalt erneut angezeigt wird."
+            },
+            {
+              "label": "Dummy"
+            }
+          ]
+        },
+        {
+          "label": "Einstellungen für \"Wiederholen bis gemeistert\"",
+          "fields": [
+            {
+              "label": "Bestehensgrenze (%)"
+            },
+            {
+              "label": "Aufeinanderfolgende bestandene Versuche zum Meistern eines Inhalts"
+            },
+            {
+              "label": "Intervall (Tage)",
+              "description": "Anzahl der Tage, die vergehen sollen, bevor ein Inhalt erneut angezeigt wird. Auf 0 setzen für keine Wartezeit."
+            }
+          ]
+        },
+        {
+          "label": "Einstellungen für \"Benutzerdefiniert (gewichtete Priorität)\"",
+          "fields": [
+            {
+              "label": "Gewichtung: Zeit seit letztem Versuch (mehr Zeit = höhere Priorität)"
+            },
+            {
+              "label": "Gewichtung: Letzte Punktzahl (niedrigere Punktzahl = höhere Priorität)"
+            },
+            {
+              "label": "Gewichtung: Durchschnittliche Punktzahl (niedrigere Durchschnittspunktzahl = höhere Priorität)"
+            },
+            {
+              "label": "Gewichtung: Anzahl der Versuche (weniger Versuche = höhere Priorität)"
+            },
+            {
+              "label": "Intervall (Tage)",
+              "description": "Anzahl der Tage, die vergehen sollen, bevor ein Inhalt erneut angezeigt wird. Auf 0 setzen für keine Wartezeit."
+            }
+          ]
+        },
+        {
+          "label": "Allgemeine Einstellungen",
+          "description": "Einstellungen, die unabhängig vom gewählten Wiederholungsmodus gelten.",
+          "fields": [
+            {
+              "label": "Übungen randomisieren"
+            },
+            {
+              "label": "Maximale Anzahl von Inhalten pro Runde",
+              "description": "Maximale Anzahl von Inhalten pro Wiederholungsrunde. Leer lassen, um alle fälligen Inhalte einzubeziehen."
+            },
+            {
+              "label": "Maximale Anzahl von Runden",
+              "description": "Leer lassen oder 0 setzen für unbegrenzte Runden."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Verhaltenseinstellungen",
+      "fields": [
+        {
+          "label": "Nutzer kann zurückgehen",
+          "description": "Wenn aktiviert, kann der Nutzer zu einer vorherigen Frage zurückgehen."
+        },
+        {
+          "label": "Nutzer kann überspringen",
+          "description": "Wenn aktiviert, kann der Nutzer ohne Beantwortung der aktuellen Frage überspringen."
+        },
+        {
+          "label": "\"Lösung anzeigen\"-Button überschreiben",
+          "description": "Bestimmt, ob der \"Lösung anzeigen\"-Button für alle Fragen angezeigt, ausgeblendet oder pro Frage einzeln konfiguriert wird.",
+          "options": [
+            {
+              "label": "Inhaltseinstellung verwenden"
+            },
+            {
+              "label": "Für alle anzeigen"
+            },
+            {
+              "label": "Für alle ausblenden"
+            }
+          ]
+        },
+        {
+          "label": "\"Wiederholen\"-Button überschreiben",
+          "description": "Bestimmt, ob der \"Wiederholen\"-Button für alle Fragen angezeigt, ausgeblendet oder pro Frage einzeln konfiguriert wird.",
+          "options": [
+            {
+              "label": "Inhaltseinstellung verwenden"
+            },
+            {
+              "label": "Für alle anzeigen"
+            },
+            {
+              "label": "Für alle ausblenden"
+            }
+          ]
+        },
+        {
+          "label": "Aktuelle Seite in oberer Leiste anzeigen"
+        },
+        {
+          "label": "Aktuelle Runde in oberer Leiste anzeigen"
+        },
+        {
+          "label": "Inhaltstitel in oberer Leiste anzeigen"
+        }
+      ]
+    },
+    {
+      "label": "Benutzeroberfläche",
+      "fields": [
+        {
+          "label": "Rundenvorlage",
+          "description": "@round ist ein Platzhalter und wird durch den jeweiligen Wert ersetzt.",
+          "default": "Runde @round"
+        },
+        {
+          "label": "Inhalt ohne Titel",
+          "default": "Ohne Titel"
+        },
+        {
+          "label": "Beschriftung für \"Weiter\"-Button",
+          "default": "Weiter"
+        },
+        {
+          "label": "Beschriftung für \"Absenden\"-Button",
+          "default": "Absenden"
+        },
+        {
+          "label": "Beschriftung für \"Beenden\"-Button",
+          "default": "Beenden"
+        },
+        {
+          "label": "Beschriftung für \"Zurück\"-Button",
+          "default": "Zurück"
+        },
+        {
+          "label": "Keine Inhalte",
+          "default": "Es wurden keine gültigen Inhalte konfiguriert."
+        },
+        {
+          "label": "Neue Runde gestartet (Bildschirmleser-Text)",
+          "default": "Neue Runde gestartet."
+        },
+        {
+          "label": "Nächste Runde noch nicht verfügbar",
+          "default": "Komm am @date zurück, um die nächste Runde zu starten.",
+          "description": "@date ist ein Platzhalter und wird durch Datum und Uhrzeit ersetzt, ab wann die nächste Runde verfügbar ist."
+        },
+        {
+          "label": "Alle Runden abgeschlossen",
+          "default": "Du hast alle Wiederholungsrunden abgeschlossen. Gut gemacht!"
+        },
+        {
+          "label": "Maximale Anzahl von Runden erreicht",
+          "default": "Du hast die maximale Anzahl von Wiederholungsrunden erreicht."
+        },
+        {
+          "label": "Beschriftung für \"Runde starten\"-Button",
+          "description": "@number ist ein Platzhalter und wird durch den jeweiligen Wert ersetzt.",
+          "default": "Runde @number starten"
+        },
+        {
+          "label": "Beschriftung für \"Von vorne beginnen\"-Button",
+          "description": "Auf der Rundenzusammenfassungsseite. Setzt den gesamten Wiederholungsfortschritt zurück.",
+          "default": "Von vorne beginnen"
+        },
+        {
+          "label": "Bestätigungsdialogtext für Neustart",
+          "description": "In einem Bestätigungsdialog vor dem Zurücksetzen des gesamten Fortschritts.",
+          "default": "Bist du sicher, dass du von vorne beginnen möchtest? Der gesamte Fortschritt geht verloren."
+        },
+        {
+          "label": "Rundenergebnis: Überschrift",
+          "default": "Ergebnis"
+        },
+        {
+          "label": "Rundenergebnis: Nummer",
+          "description": "@round ist ein Platzhalter und wird durch den jeweiligen Wert ersetzt.",
+          "default": "Runde @round"
+        },
+        {
+          "label": "Diese Runde bestanden",
+          "default": "Diese Runde bestanden"
+        },
+        {
+          "label": "Diese Runde durchgefallen",
+          "default": "Diese Runde durchgefallen"
+        },
+        {
+          "label": "Gesamtergebnisse",
+          "default": "Gesamtergebnisse"
+        },
+        {
+          "label": "Abgeschlossene Übungen",
+          "default": "Abgeschlossene Übungen"
+        },
+        {
+          "label": "X von Y",
+          "description": "@x und @y sind Platzhalter und werden durch die jeweiligen Werte ersetzt.",
+          "default": "@x/@y"
+        },
+        {
+          "label": "Runde abgeschlossen, nächste Runde verfügbar",
+          "default": "Runde abgeschlossen! Du kannst jetzt die nächste Runde starten."
+        }
+      ]
+    },
+    {
+      "label": "Barrierefreiheitstexte",
+      "fields": [
+        {
+          "label": "Vorheriger Inhalt",
+          "default": "Zum vorherigen Inhalt gehen."
+        },
+        {
+          "label": "Nächster Inhalt",
+          "default": "Zum nächsten Inhalt gehen."
+        },
+        {
+          "label": "Runde beenden, Ergebnisse absenden und anzeigen",
+          "default": "Diese Runde beenden, Ergebnisse absenden und anzeigen."
+        },
+        {
+          "label": "Runde beenden",
+          "default": "Diese Runde beenden und Ergebnisse anzeigen."
+        },
+        {
+          "label": "Zu Seite gewechselt",
+          "default": "Zu Seite @current von @total gewechselt.",
+          "description": "@current und @total sind Platzhalter und werden durch die jeweiligen Werte ersetzt."
+        },
+        {
+          "label": "Obere Navigation",
+          "default": "Obere Navigationsleiste"
+        },
+        {
+          "label": "Untere Navigation",
+          "default": "Untere Navigationsleiste"
+        },
+        {
+          "label": "Aktuelle Frage",
+          "default": "Aktuelle Frage"
+        },
+        {
+          "label": "Beantwortet",
+          "default": "Beantwortet"
+        },
+        {
+          "label": "Unbeantwortet",
+          "default": "Unbeantwortet"
+        },
+        {
+          "label": "Inhalt @current von @total",
+          "default": "Inhalt @current von @total",
+          "description": "@current und @total sind Platzhalter und werden durch die jeweiligen Werte ersetzt."
+        }
+      ]
+    }
+  ]
+}

@@ -1,11 +1,7 @@
 import PageSelector from './page-selector.js';
 import { extend } from '@services/util.js';
 
-/**
- * Author-configurable selector. Combines several signals about a page (how stale it is, how well it was
- * answered, how often it was attempted) into a single priority score using author-provided weights, and draws
- * the highest-priority pages into the next round.
- */
+/** Author-configurable weighted page selector combining staleness, accuracy, and frequency signals. */
 export default class CustomWeightedSelector extends PageSelector {
   /**
    * @class
@@ -63,8 +59,7 @@ export default class CustomWeightedSelector extends PageSelector {
   }
 
   /**
-   * Compute priority score for page. Higher means more due for repetition.
-   * Pages never attempted always get highest priority.
+   * Compute priority score for page, higher means more due, never-attempted pages get highest priority.
    * @param {number} id Page id.
    * @param {object} pageManager Page manager to read progress from.
    * @param {Date} now Reference date.

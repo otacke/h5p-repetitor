@@ -2,6 +2,9 @@ import { extend } from '@services/util.js';
 import H5PContent from './h5p-content.js';
 import './page.scss';
 
+/** @constant {number} INITIAL_POSITION Future position, initial slide from right. */
+const INITIAL_POSITION = 1;
+
 export default class Page {
   /**
    * @class
@@ -27,7 +30,7 @@ export default class Page {
 
     this.dom = document.createElement('div');
     this.dom.classList.add('h5p-repetitor-page');
-    this.setPosition(1); // 1 = Future to allow initial slide in from right
+    this.setPosition(INITIAL_POSITION);
 
     this.h5pContent = new H5PContent(
       {

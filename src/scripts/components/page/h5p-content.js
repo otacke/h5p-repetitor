@@ -259,10 +259,7 @@ export default class H5PContent {
    * Show solutions.
    */
   showSolutions() {
-    /*
-     * If not attached yet, some contents can fail (e. g. CP), but contents
-     * that are not attached never had a previous state change, so okay
-     */
+    // If not attached yet, some contents can fail (e. g. CP).
     if (!this.isAttached) {
       this.attachInstance();
     }
@@ -274,10 +271,7 @@ export default class H5PContent {
    * Reset.
    */
   reset() {
-    /*
-     * If not attached yet, some contents can fail (e. g. CP), but contents
-     * that are not attached never had a previous state change, so okay
-     */
+    // If not attached yet, some contents can fail (e. g. CP).
     if (!this.isAttached) {
       this.attachInstance();
     }
