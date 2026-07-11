@@ -49,7 +49,7 @@
           "fields": [
             {
               "label": "Intervalle je Kasten (Tage)",
-              "description": "Ein Eintrag pro Kasten. Die Anzahl der Einträge bestimmt die Anzahl der Kästen. Jeder Wert gibt die Anzahl der Tage an, bevor ein Inhalt in diesem Kasten wieder fällig ist.",
+              "description": "Ein Eintrag pro Kasten. Die Anzahl der Einträge bestimmt die Anzahl der Kästen. Jeder Wert gibt die absolute Anzahl der Tage an, bevor ein Inhalt in diesem Kasten wieder fällig ist. Die Tage sind nicht reletive zum vorherigen Kasten.",
               "entity": "Kasten",
               "field": {
                 "label": "Tage"

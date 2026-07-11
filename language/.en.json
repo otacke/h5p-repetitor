@@ -49,7 +49,7 @@
           "fields": [
             {
               "label": "Box intervals (days)",
-              "description": "One entry per box. The number of entries determines the number of boxes. Each value is the number of days to wait before a content in that box is due again.",
+              "description": "One entry per box. The number of entries determines the number of boxes. Each value is the absolute number of days to wait before a content in that box is due again. It is not relative to the previous box.",
               "entity": "box",
               "field": {
                 "label": "Days"
