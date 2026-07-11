@@ -64,7 +64,10 @@ export default class H5PContent {
         this.params.globals.get('contentId'),
         undefined,
         true,
-        { previousState: previousState },
+        {
+          parent: this.params.globals.get('mainInstance'),
+          previousState: previousState,
+        },
       );
     }
 

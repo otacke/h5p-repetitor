@@ -622,6 +622,14 @@ export default class Main {
   }
 
   /**
+   * Get current round.
+   * @returns {number} Current round.
+   */
+  getRound() {
+    return this.spacedRepetitionController.getCurrentRoundNumber();
+  }
+
+  /**
    * Build content state for every page, indexed by page id.
    * @returns {object[]} Content state, indexed by page id.
    */

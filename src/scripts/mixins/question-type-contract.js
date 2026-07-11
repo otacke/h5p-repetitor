@@ -67,10 +67,31 @@ export default class QuestionTypeContract {
     // Not a valid xAPI value (!), but H5P uses it for reporting
     xAPIEvent.data.statement.object.definition.interactionType = 'compound';
 
+    // Add round string to allow halfway decent reporting for Repetitor content.
+    const roundString = this.dictionary.get('l10n.roundTemplate').replace('@round', this.main.getRound());
+    this.attachRound(xAPIEvent.data.statement.object.definition, 'description', roundString);
+    this.attachRound(xAPIEvent.data.statement.object.definition, 'name', roundString);
+
     return {
       statement: xAPIEvent.data.statement,
       children: this.main.getXAPIData(),
     };
+  }
+
+  /**
+   * Attach round string to xAPI definition object.
+   * @param {object} xAPIDefinition XAPI definition object.
+   * @param {string} key Property key (intended for `name` and `description`).
+   * @param {string} roundString Round string, e.g. `Round 1`.
+   */
+  attachRound(xAPIDefinition, key, roundString) {
+    const locales = [this.languageTag, 'en-US'];
+    const base = (xAPIDefinition?.[key]?.[this.languageTag] ?? xAPIDefinition?.[key]?.['en-US']);
+    const withRound = [base, roundString].filter((item) => typeof item === 'string').join('|');
+
+    xAPIDefinition[key] = xAPIDefinition[key] ?? {};
+    xAPIDefinition[key][this.languageTag] = withRound;
+    xAPIDefinition[key]['en-US'] = withRound;
   }
 
   /**
