@@ -9,7 +9,7 @@ export const getSemanticsDefaults = (start = semantics) => {
   let defaults = {};
 
   if (!Array.isArray(start)) {
-    return defaults;
+    return defaults; // Must be array, root or list
   }
 
   start.forEach((entry) => {
@@ -25,7 +25,11 @@ export const getSemanticsDefaults = (start = semantics) => {
     }
     else if (entry.type === 'group' && entry.fields) {
       const groupDefaults = getSemanticsDefaults(entry.fields);
-      if (Object.keys(groupDefaults).length) {
+      // Workaround for stupid H5P core behavior treating groups with one child as the child itself
+      if (Object.keys(groupDefaults).length === 1) {
+        defaults[entry.name] = Object.values(groupDefaults)[0];
+      }
+      else if (Object.keys(groupDefaults).length > 1) {
         defaults[entry.name] = groupDefaults;
       }
     }
